@@ -61,11 +61,6 @@ cargarPreset()
           <RadioGroupItem id="op-enviar" value="enviar" />
           <Label for="op-enviar">Enviar puntos</Label>
         </div>
-        <div class="flex items-center gap-2">
-          <RadioGroupItem id="op-pedir" value="pedir" />
-          <Label for="op-pedir">Pedir puntos</Label>
-        </div>
-
         <div v-if="requiereContraparte" class="ml-6 flex flex-col gap-1.5">
           <Label for="contraparte">Nombre del receptor/donador</Label>
           <Input id="contraparte" v-model="contraparte" type="text" />

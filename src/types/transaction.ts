@@ -1,4 +1,4 @@
-export type OperationType = 'enviar' | 'pedir' | 'comprar'
+export type OperationType = 'enviar' | 'comprar'
 
 export type Decision = 'GREEN' | 'YELLOW' | 'RED' | 'BLUE'
 

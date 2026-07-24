@@ -37,7 +37,6 @@ const badgeByDecision: Record<Decision, string> = {
 
 const operacionLabel: Record<string, string> = {
   enviar: 'Enviar puntos',
-  pedir: 'Pedir puntos',
   comprar: 'Comprar puntos',
 }
 

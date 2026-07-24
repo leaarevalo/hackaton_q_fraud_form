@@ -1,6 +1,6 @@
 import type { Decision, OperationType, TransactionRecord } from '@/types/transaction'
 
-const OPERACIONES: OperationType[] = ['enviar', 'pedir', 'comprar']
+const OPERACIONES: OperationType[] = ['enviar', 'comprar']
 
 const NOMBRES = [
   'Juan Pérez',
