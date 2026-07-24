@@ -122,13 +122,22 @@ Si se usan datos reales de clientes, revisar el ángulo de datos personales ante
 No construir, aunque parezca que suma:
 
 - Configuración de reglas por cliente / multi-tenancy
-- Dashboard de monitoreo
 - Autenticación y manejo de usuarios
 - Streaming real (Kafka y similares)
 - MFA
-- Cualquier UI más allá del formulario de prueba
+- Cualquier UI más allá del formulario de prueba y su dashboard
 
 Nada de esto puntúa en ninguno de los cinco ejes.
+
+### Dashboard de monitoreo (parte del harness)
+
+El tab "Dashboard" del formulario de prueba incluye, además del historial
+simple, un panel de monitoreo (KPIs del día, distribución de decisiones por
+hora, donut de verificación, alertas y casos con reglas activadas). Todo se
+deriva de los mismos `TransactionRecord` ya existentes (mock/localStorage) —
+no se agregan campos de banco, cliente ni agente asignado que no existen en
+el modelo real. Sigue siendo parte del harness de UI, no un producto de
+investigación de casos.
 
 ## Formulario de prueba (harness)
 
