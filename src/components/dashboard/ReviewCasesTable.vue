@@ -18,7 +18,6 @@ const props = defineProps<{
 
 const operacionLabel: Record<string, string> = {
   enviar: 'Enviar puntos',
-  comprar: 'Comprar puntos',
 }
 
 // "Casos con reglas activadas" reemplaza la tabla "Ongoing investigation" del

@@ -2,8 +2,9 @@
 import { computed, ref } from 'vue'
 import { clearHistory, records, seedHistory } from '@/lib/history'
 import { countByBucket, groupByHour, hoyISO, unusualRecords } from '@/lib/dashboardStats'
+import { nombreLegible } from '@/lib/users'
 import { BADGE_BY_DECISION } from '@/lib/chartColors'
-import type { Decision } from '@/types/transaction'
+import type { Decision, TransactionRecord } from '@/types/transaction'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -17,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { SparklesIcon } from '@lucide/vue'
 import StatCard from '@/components/dashboard/StatCard.vue'
 import HourlyActivityChart from '@/components/dashboard/HourlyActivityChart.vue'
 import VerificationDonut from '@/components/dashboard/VerificationDonut.vue'
@@ -35,7 +37,6 @@ const conteoDelDia = computed(() => countByBucket(registrosDelDia.value))
 
 const operacionLabel: Record<string, string> = {
   enviar: 'Enviar puntos',
-  comprar: 'Comprar puntos',
 }
 
 const statsDelDia = computed(() => {
@@ -47,10 +48,22 @@ const statsDelDia = computed(() => {
 function formatHora(fechaISO: string) {
   return new Date(fechaISO).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 }
+
+const MOTIVO_GENERICO: Partial<Record<Decision, string>> = {
+  GREEN: 'Sin señales de riesgo detectadas.',
+  RED: 'Riesgo alto: transferencia bloqueada para revisión manual.',
+}
+
+function motivoCaso(r: TransactionRecord): string {
+  const generico = MOTIVO_GENERICO[r.decision]
+  if (generico) return generico
+  // YELLOW / BLUE: pasan por el análisis de IA, mostramos el reasoning real.
+  return r.aiAnalysis?.reasoning ?? r.motivo
+}
 </script>
 
 <template>
-  <div class="mx-auto mt-8 flex max-w-6xl flex-col gap-4">
+  <div class="mx-auto mt-8 flex w-full max-w-[110rem] flex-col gap-4">
     <div class="flex flex-wrap items-end justify-between gap-2">
       <div class="flex flex-col gap-1.5">
         <Label for="fecha-filtro">Fecha</Label>
@@ -90,17 +103,18 @@ function formatHora(fechaISO: string) {
               <TableHead>Contraparte</TableHead>
               <TableHead>Cantidad</TableHead>
               <TableHead>Decisión</TableHead>
-              <TableHead>Reglas</TableHead>
+              <TableHead>Score</TableHead>
+              <TableHead>Motivo</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableEmpty v-if="registrosDelDia.length === 0" :colspan="6">
+            <TableEmpty v-if="registrosDelDia.length === 0" :colspan="7">
               No hay transacciones para esta fecha.
             </TableEmpty>
             <TableRow v-for="r in registrosDelDia" :key="r.id">
               <TableCell>{{ formatHora(r.fecha) }}</TableCell>
               <TableCell>{{ operacionLabel[r.operacion] }}</TableCell>
-              <TableCell>{{ r.contraparte ?? '—' }}</TableCell>
+              <TableCell>{{ r.contraparte ? nombreLegible(r.contraparte) : '—' }}</TableCell>
               <TableCell>{{ r.cantidad }}</TableCell>
               <TableCell>
                 <span
@@ -110,7 +124,13 @@ function formatHora(fechaISO: string) {
                   {{ r.decision }}
                 </span>
               </TableCell>
-              <TableCell>{{ r.reglas.join(', ') || '—' }}</TableCell>
+              <TableCell>{{ r.riskScore }}</TableCell>
+              <TableCell class="max-w-sm whitespace-normal wrap-break-word">
+                <span class="flex items-start gap-1.5">
+                  <SparklesIcon v-if="r.aiInvoked" class="mt-0.5 size-3.5 shrink-0 text-violet-600" />
+                  <span>{{ motivoCaso(r) }}</span>
+                </span>
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -124,7 +144,8 @@ function formatHora(fechaISO: string) {
         </CardHeader>
         <CardContent class="flex flex-col gap-3">
           <StatCard label="Transacciones totales" :value="registrosDelDia.length" />
-          <StatCard label="Transacciones inusuales" :value="alertasDelDia.length" />
+          <StatCard label="Potencialmente riesgosas" :value="statsDelDia.YELLOW" />
+          <StatCard label="Riesgosas" :value="statsDelDia.RED" />
         </CardContent>
       </Card>
 
@@ -151,10 +172,10 @@ function formatHora(fechaISO: string) {
       </Card>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div v-if="false" class="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle>Alertas de transacciones inusuales</CardTitle>
+          <CardTitle>Alertas de transacciones potencialmente riesgosas</CardTitle>
         </CardHeader>
         <CardContent>
           <AlertsList :records="alertasDelDia" />

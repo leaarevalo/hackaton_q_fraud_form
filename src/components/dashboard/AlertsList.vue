@@ -10,7 +10,6 @@ const props = defineProps<{
 
 const operacionLabel: Record<string, string> = {
   enviar: 'Enviar puntos',
-  comprar: 'Comprar puntos',
 }
 
 const alertas = computed(() => props.records.slice(0, 8))

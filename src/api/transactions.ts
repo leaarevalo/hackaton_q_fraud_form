@@ -1,31 +1,64 @@
-import type { TransactionRequest, TransactionResponse } from '../types/transaction'
+import type { MatchedRule, TransactionRequest, TransactionResponse } from '../types/transaction'
 
-// Punto de reemplazo: cuando exista el motor real, cambiar el cuerpo de esta
-// función por un fetch a POST /v1/transactions con este mismo contrato.
-export async function evaluarTransaccion(
-  req: TransactionRequest,
-): Promise<TransactionResponse> {
-  await new Promise((resolve) => setTimeout(resolve, 300))
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:3000'
+const TENANT_ID = 'qurable_loyalty'
 
-  const reglas: string[] = []
-  let decision: TransactionResponse['decision'] = 'GREEN'
-  let motivo = 'Sin señales de riesgo detectadas.'
-
-  if (req.cantidad >= 10000) {
-    reglas.push('monto_alto')
-    decision = 'RED'
-    motivo = 'La cantidad de puntos supera el umbral permitido en una sola operación.'
-  } else if (req.cantidad >= 1000) {
-    reglas.push('monto_elevado')
-    decision = 'YELLOW'
-    motivo = 'La cantidad de puntos es inusualmente alta para este tipo de operación.'
+export async function evaluarTransaccion(req: TransactionRequest): Promise<TransactionResponse> {
+  const payload = {
+    tenantId: TENANT_ID,
+    scope: 'POINTS_TRANSFER',
+    transaction: {
+      id: crypto.randomUUID(),
+      timestamp: new Date().toISOString(),
+      points: req.cantidad,
+      currency: 'LOYALTY_PTS',
+    },
+    sender: {
+      userId: req.cuentaOrigen,
+      ip: req.ipOrigen,
+      accountAgeMinutes: req.senderAccountAgeMinutes ?? 129600,
+    },
+    receiver: {
+      userId: req.contraparte,
+      ip: req.ipDestino,
+    },
+    device: {
+      fingerprint: req.fingerprint,
+      associatedAccountsCount: req.deviceAssociatedAccountsCount ?? 1,
+      isNewForUser: req.deviceIsNewForUser ?? false,
+      platform: 'Web',
+    },
   }
 
-  if (req.operacion === 'comprar' && req.cantidad >= 5000) {
-    reglas.push('compra_grande')
-    decision = decision === 'RED' ? 'RED' : 'YELLOW'
-    motivo = 'Compra de puntos por un monto grande.'
+  const res = await fetch(`${API_URL}/api/v1/fraud/evaluate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => null)
+    throw new Error(body?.error ?? `Error del motor de fraude (${res.status})`)
   }
 
-  return { decision, reglas, motivo }
+  const data = await res.json()
+  const matchedRules: MatchedRule[] = data.executionSummary.matchedRules ?? []
+  const aiAnalysis = data.executionSummary.aiAnalysis ?? null
+
+  return {
+    transactionId: data.transactionId,
+    decision: data.decision.riskLevel,
+    riskScore: data.decision.riskScore,
+    recommendedAction: data.decision.recommendedAction,
+    aiInvoked: data.decision.aiInvoked,
+    matchedRules,
+    reglas: matchedRules.map((r) => r.id),
+    motivo:
+      aiAnalysis?.reasoning ??
+      (matchedRules.length
+        ? `Reglas activadas: ${matchedRules.map((r) => r.id).join(', ')}`
+        : 'Sin señales de riesgo detectadas.'),
+    aiAnalysis,
+    auditId: data.auditId,
+  }
 }
