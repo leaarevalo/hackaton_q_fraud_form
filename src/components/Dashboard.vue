@@ -55,10 +55,12 @@ const MOTIVO_GENERICO: Partial<Record<Decision, string>> = {
 }
 
 function motivoCaso(r: TransactionRecord): string {
-  const generico = MOTIVO_GENERICO[r.decision]
-  if (generico) return generico
-  // YELLOW / BLUE: pasan por el análisis de IA, mostramos el reasoning real.
-  return r.aiAnalysis?.reasoning ?? r.motivo
+  // GREEN siempre es el genérico: nunca pasa por IA.
+  if (r.decision === 'GREEN') return MOTIVO_GENERICO.GREEN!
+  // YELLOW / BLUE / RED: si la IA trajo reasoning (incluye el caso de regla
+  // crítica que la IA no puede anular), se muestra eso; si no, el genérico
+  // (RED) o el motivo basado en reglas (YELLOW/BLUE) como último fallback.
+  return r.aiAnalysis?.reasoning ?? MOTIVO_GENERICO[r.decision] ?? r.motivo
 }
 </script>
 
