@@ -22,7 +22,7 @@ export interface DemoUser {
 
 export const DEMO_USERS: DemoUser[] = [
   {
-    id: 'usr_logueado',
+    id: 'usr_logueado1',
     nombre: 'Juan Soto',
     email: 'juan.soto@qurable.com',
     iniciales: 'JS',
@@ -31,7 +31,7 @@ export const DEMO_USERS: DemoUser[] = [
     fixture: { senderAccountAgeMinutes: 129600, deviceAssociatedAccountsCount: 1, deviceIsNewForUser: false },
   },
   {
-    id: 'usr_ana',
+    id: 'usr_ana1',
     nombre: 'Ana Torres',
     email: 'ana.torres@qurable.com',
     iniciales: 'AT',
@@ -40,7 +40,7 @@ export const DEMO_USERS: DemoUser[] = [
     fixture: { senderAccountAgeMinutes: 129600, deviceAssociatedAccountsCount: 1, deviceIsNewForUser: false },
   },
   {
-    id: 'usr_beto',
+    id: 'usr_beto1',
     nombre: 'Beto Fernández',
     email: 'beto.fernandez@qurable.com',
     iniciales: 'BF',
@@ -49,7 +49,7 @@ export const DEMO_USERS: DemoUser[] = [
     fixture: { senderAccountAgeMinutes: 30, deviceAssociatedAccountsCount: 1, deviceIsNewForUser: true },
   },
   {
-    id: 'usr_carla',
+    id: 'usr_carla1',
     nombre: 'Carla Ruiz',
     email: 'carla.ruiz@qurable.com',
     iniciales: 'CR',
@@ -69,7 +69,7 @@ function cargarSaldos(): Record<string, number> {
     }
   }
   const seed: Record<string, number> = {}
-  for (const u of DEMO_USERS) seed[u.id] = u.id === 'usr_logueado' ? 100000 : 0
+  for (const u of DEMO_USERS) seed[u.id] = 10000
   localStorage.setItem(SALDOS_KEY, JSON.stringify(seed))
   return seed
 }
@@ -93,7 +93,7 @@ export function transferPoints(fromId: string, toId: string, amount: number) {
   persistirSaldos()
 }
 
-const usuarioActualId = ref<string>(localStorage.getItem(USUARIO_ACTUAL_KEY) ?? 'usr_logueado')
+const usuarioActualId = ref<string>(localStorage.getItem(USUARIO_ACTUAL_KEY) ?? 'usr_logueado1')
 
 export function setUsuarioActual(id: string) {
   usuarioActualId.value = id
