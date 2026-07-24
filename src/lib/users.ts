@@ -23,11 +23,11 @@ export interface DemoUser {
 export const DEMO_USERS: DemoUser[] = [
   {
     id: "usr_logueado1",
-    nombre: "Juan Soto",
-    email: "juan.soto@qurable.com",
-    iniciales: "JS",
+    nombre: "Cucchi Santiago",
+    email: "scucchi@qurable.com",
+    iniciales: "CS",
     ip: "190.10.20.30",
-    fingerprint: "fp_juan_soto",
+    fingerprint: "fp_cucchi_Santiago",
     fixture: {
       senderAccountAgeMinutes: 129600,
       deviceAssociatedAccountsCount: 1,
@@ -36,11 +36,11 @@ export const DEMO_USERS: DemoUser[] = [
   },
   {
     id: "usr_ana1",
-    nombre: "Ana Torres",
-    email: "ana.torres@qurable.com",
-    iniciales: "AT",
+    nombre: "Leandro Arevalo",
+    email: "larevalo@qurable.com",
+    iniciales: "LA",
     ip: "181.44.12.90",
-    fingerprint: "fp_ana_torres",
+    fingerprint: "fp_Leandro_Arevalo",
     fixture: {
       senderAccountAgeMinutes: 129600,
       deviceAssociatedAccountsCount: 1,
@@ -49,11 +49,11 @@ export const DEMO_USERS: DemoUser[] = [
   },
   {
     id: "usr_beto1",
-    nombre: "Beto Fernández",
-    email: "beto.fernandez@qurable.com",
-    iniciales: "BF",
+    nombre: "Salvador Woinilowicz",
+    email: "swoinilowicz@qurable.com",
+    iniciales: "SW",
     ip: "200.45.12.5",
-    fingerprint: "fp_beto_fernandez",
+    fingerprint: "fp_salvador_woinilowicz",
     fixture: {
       senderAccountAgeMinutes: 30,
       deviceAssociatedAccountsCount: 1,
@@ -62,11 +62,11 @@ export const DEMO_USERS: DemoUser[] = [
   },
   {
     id: "usr_carla1",
-    nombre: "Carla Ruiz",
-    email: "carla.ruiz@qurable.com",
-    iniciales: "CR",
+    nombre: "Federico Karra",
+    email: "fkarra@qurable.com",
+    iniciales: "FK",
     ip: "152.168.4.21",
-    fingerprint: "fp_carla_ruiz",
+    fingerprint: "fp_federico_karra",
     fixture: {
       senderAccountAgeMinutes: 129600,
       deviceAssociatedAccountsCount: 5,
