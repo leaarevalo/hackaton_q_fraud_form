@@ -153,7 +153,7 @@ function aprobarManualmente() {
         <p class="text-sm text-amber-800">
           Transferencia marcada como riesgo alto: queda pendiente de revisión manual, el saldo no se movió.
         </p>
-        <Button size="sm" class="mt-2" variant="outline" @click="aprobarManualmente">
+        <Button v-if="false" size="sm" class="mt-2" variant="outline" @click="aprobarManualmente">
           Aprobar manualmente
         </Button>
       </div>
