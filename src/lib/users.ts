@@ -69,7 +69,7 @@ function cargarSaldos(): Record<string, number> {
     }
   }
   const seed: Record<string, number> = {}
-  for (const u of DEMO_USERS) seed[u.id] = u.id === 'usr_logueado' ? 10000 : 0
+  for (const u of DEMO_USERS) seed[u.id] = u.id === 'usr_logueado' ? 100000 : 0
   localStorage.setItem(SALDOS_KEY, JSON.stringify(seed))
   return seed
 }
